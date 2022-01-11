@@ -23,23 +23,25 @@ fn main() {
 
     const SCREEN_WIDTH: u32 = 1280;
     const SCREEN_HEIGHT: u32 = 720;
+    const MAP_X: usize = 24;
+    const MAP_Y: usize = 24;
 
-    let mut camera = Location {
+    let mut character = Location {
         pos: Vector {
-            x: 8_f32,
-            y: 12_f32
+            x: 4_f32,
+            y: 4_f32
         },
         dir: Vector {
-            x: 0_f32,
-            y: -1_f32
+            x: -4_f32,
+            y: 0_f32
         },
         plane: Vector {
-            x: 1_f32,
-            y: 0_f32
+            x: 0_f32,
+            y: 1_f32
         }
     };
 
-    let game_map: [[i32; 24]; 24] = 
+    let game_map: [[i32; MAP_X]; MAP_Y] = 
     [
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
         [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
@@ -66,6 +68,11 @@ fn main() {
         [1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
     ];
+
+    let mut clock = Timer {
+        current: 0_f32,
+        old: 0_f32
+    };
 
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
@@ -103,6 +110,128 @@ fn main() {
                 _ => {}
             }
         }
+
+        let mut x: u32 = 0;
+
+        while x < SCREEN_WIDTH {
+            let camera_x: f32 = (2 as f32 * x as f32 / (SCREEN_WIDTH as f32)) - 1 as f32;
+            let ray_dir = Vector {
+                x:  character.dir.x+character.plane.x*camera_x,
+                y:  character.dir.y+character.plane.y*camera_x
+            };
+
+            let mut map = (character.pos.x as i32, character.pos.y as i32);
+
+            let delta_dist = Vector {
+                x: if ray_dir.x == 0_f32 {f32::INFINITY} else {f32::abs(1 as f32 / ray_dir.x)},
+                y: if ray_dir.y == 0_f32 {f32::INFINITY} else {f32::abs(1 as f32 / ray_dir.y)}
+            };
+
+            let mut hit: u8 = 0;
+            let mut side: i8 = 0;
+
+            let mut step_dir = (0 as i8, 0 as i8);
+
+            let mut side_dist = Vector {
+                x: 0 as f32,
+                y: 0 as f32
+            };
+
+            if ray_dir.x < 0 as f32 {
+                step_dir.0 = -1;
+                side_dist.x = (character.pos.x - map.0 as f32) * delta_dist.x;
+            }
+            else {
+                step_dir.0 = 1;
+                side_dist.x = (map.0 as f32 + 1 as f32 - character.pos.x) * delta_dist.x;
+            }
+            if ray_dir.y < 0 as f32 {
+                step_dir.1 = -1;
+                side_dist.y = (character.pos.y - map.1 as f32) * delta_dist.y;
+            }
+            else {
+                step_dir.1 = 1;
+                side_dist.y = (map.1 as f32 + 1 as f32 - character.pos.y) * delta_dist.y;
+            }
+
+            // DDA Alg Begins
+            while hit == 0 {
+                if side_dist.x < side_dist.y {
+                    side_dist.x += delta_dist.x;
+                    map.0 += step_dir.0 as i32;
+                    side = 0;
+                }
+                else {
+                    side_dist.y += delta_dist.y;
+                    map.1 += step_dir.1 as i32;
+                    side = 1;
+                }
+                if game_map[map.0 as usize][map.1 as usize] != 0 { hit = 1 }
+            }
+
+            let perp_wall_dist: f32;
+
+            if side == 0 {
+                perp_wall_dist = side_dist.x - delta_dist.x;
+            }
+            else {
+                perp_wall_dist = side_dist.y - delta_dist.y;
+            }
+
+            let line_height = SCREEN_HEIGHT as i32 / perp_wall_dist as i32;
+
+            let mut draw_line = ((SCREEN_HEIGHT as i32 - line_height) / 2,
+                        (SCREEN_HEIGHT as i32 + line_height) / 2);
+
+            if draw_line.0 < 0 {draw_line.0 = 0 as i32}
+            if draw_line.1 >= SCREEN_HEIGHT as i32 {draw_line.1 = SCREEN_HEIGHT as i32 - 1}
+
+            let point1 = sdl2::rect::Point::new(x as i32, draw_line.0);
+            let point2 = sdl2::rect::Point::new(x as i32, draw_line.1);
+
+            let mut color: Color;
+
+            match game_map[map.0 as usize][map.1 as usize] {
+                1 => color = Color::RED,
+                2 => color = Color::GREEN,
+                3 => color = Color::BLUE,
+                4 => color = Color::WHITE,
+                _ => color = Color::YELLOW
+            }
+
+            if side == 1 {
+                color.r = color.r / 2;
+                color.g = color.g / 2;
+                color.b = color.b / 2;
+            }
+
+            canvas.set_draw_color(color);
+            canvas.draw_line(point1, point2);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            x += 1;
+        }
+
+
+
+
+
+
+
+
+
 
 
 
