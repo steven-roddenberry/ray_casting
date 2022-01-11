@@ -14,11 +14,6 @@ struct Vector {
     y: f32
 }
 
-struct Timer {
-    current: f32,
-    old: f32
-}
-
 fn main() {
 
     const SCREEN_WIDTH: u32 = 1280;
@@ -32,7 +27,7 @@ fn main() {
             y: 4_f32
         },
         dir: Vector {
-            x: -4_f32,
+            x: -1_f32,
             y: 0_f32
         },
         plane: Vector {
@@ -69,11 +64,6 @@ fn main() {
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
     ];
 
-    let mut clock = Timer {
-        current: 0_f32,
-        old: 0_f32
-    };
-
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     let window = video_subsystem.window(
@@ -86,6 +76,9 @@ fn main() {
 
     let mut event_pump = sdl_context.event_pump().unwrap();
 
+    let move_speed = 0.05;
+    let rotate_speed = 0.1;
+
     'running: loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -93,17 +86,27 @@ fn main() {
                 Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
                     break 'running
                 },
+                Event::KeyDown { keycode: Some(Keycode::W), ..} => {
+                    if game_map[(character.pos.x + character.dir.x * move_speed) as usize]
+                               [character.pos.y as usize] == 0 
+                        {character.pos.x += character.dir.x * move_speed};
+                    if game_map[character.pos.x as usize]
+                               [(character.pos.y + character.dir.y * move_speed) as usize] == 0
+                        {character.pos.y += character.dir.y * move_speed};
+                },
+                Event::KeyDown { keycode: Some(Keycode::S), ..} => {
+                    if game_map[(character.pos.x - character.dir.x * move_speed) as usize]
+                               [character.pos.y as usize] == 0 
+                        {character.pos.x -= character.dir.x * move_speed};
+                    if game_map[character.pos.x as usize]
+                               [(character.pos.y - character.dir.y * move_speed) as usize] == 0
+                        {character.pos.y -= character.dir.y * move_speed};
+                },
 /*
-                Event::KeyDown { keycode: Some(Keycode::W)} => {
+                Event::KeyDown { keycode: Some(Keycode::A), ..} => {
 
                 },
-                Event::KeyDown { keycode: Some(Keycode::S)} => {
-
-                },
-                Event::KeyDown { keycode: Some(Keycode::A)} => {
-
-                },
-                Event::KeyDown { keycode: Some(Keycode::D)} => {
+                Event::KeyDown { keycode: Some(Keycode::D), ..} => {
 
                 },
 */
@@ -208,22 +211,8 @@ fn main() {
             canvas.set_draw_color(color);
             canvas.draw_line(point1, point2);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
             x += 1;
         }
-
 
 
 
