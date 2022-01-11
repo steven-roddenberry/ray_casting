@@ -13,15 +13,15 @@ fn main() {
 
     let mut camera = Location {
         pos: Vector {
-            x: 4_f32,
-            y: 8_f32
+            x: 8_f32,
+            y: 12_f32
         },
         dir: Vector {
             x: 0_f32,
-            y: 2_f32
+            y: 1_f32
         },
         plane: Vector {
-            x: 2_f32,
+            x: 1_f32,
             y: 0_f32
         }
     };
@@ -54,10 +54,6 @@ fn main() {
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
     ];
 
-    for i in game_map.iter() {
-        println!("{:?}", i);
-    }
-
 //          Gameplay loop
 /*    loop {
 
@@ -72,6 +68,5 @@ fn main() {
 
 
     }*/
-
 
 }
