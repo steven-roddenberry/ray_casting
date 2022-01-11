@@ -14,7 +14,15 @@ struct Vector {
     y: f32
 }
 
+struct Timer {
+    current: f32,
+    old: f32
+}
+
 fn main() {
+
+    const SCREEN_WIDTH: u32 = 1280;
+    const SCREEN_HEIGHT: u32 = 720;
 
     let mut camera = Location {
         pos: Vector {
@@ -23,7 +31,7 @@ fn main() {
         },
         dir: Vector {
             x: 0_f32,
-            y: 1_f32
+            y: -1_f32
         },
         plane: Vector {
             x: 1_f32,
@@ -61,10 +69,11 @@ fn main() {
 
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
-    let window = video_subsystem.window("Wolfenstein 3D", 640, 480).position_centered().build().unwrap();
+    let window = video_subsystem.window(
+        "Wolfenstein 3D", SCREEN_WIDTH, SCREEN_HEIGHT)
+        .position_centered().build().unwrap();
     let mut canvas = window.into_canvas().build().unwrap();
 
-//    canvas.set_draw_color(Color::RGB(128, 0, 128));
     canvas.clear();
     canvas.present();
 
@@ -77,6 +86,20 @@ fn main() {
                 Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
                     break 'running
                 },
+/*
+                Event::KeyDown { keycode: Some(Keycode::W)} => {
+
+                },
+                Event::KeyDown { keycode: Some(Keycode::S)} => {
+
+                },
+                Event::KeyDown { keycode: Some(Keycode::A)} => {
+
+                },
+                Event::KeyDown { keycode: Some(Keycode::D)} => {
+
+                },
+*/
                 _ => {}
             }
         }
@@ -85,6 +108,5 @@ fn main() {
 
 
         canvas.present();
-        ::std::thread::sleep(Duration::new(0, 1000000000_u32 / 60));
     }
 }
