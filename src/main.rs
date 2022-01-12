@@ -14,8 +14,8 @@ struct Vector {
 }
 
 fn main() {
-    const SCREEN_WIDTH: u32 = 1920;
-    const SCREEN_HEIGHT: u32 = 1080;
+    const SCREEN_WIDTH: u32 = 1280;
+    const SCREEN_HEIGHT: u32 = 720;
     const MAP_X: usize = 24;
     const MAP_Y: usize = 24;
 
@@ -39,8 +39,8 @@ fn main() {
     };
 
     // Camera and Character movement rates
-    let move_speed = 0.05;
-    let rotate_speed = 0.05;
+    let move_speed = 0.1;
+    let rotate_speed = 0.06;
 
     // Current wall layout
     let game_map: [[i32; MAP_X]; MAP_Y] = 
@@ -138,13 +138,14 @@ fn main() {
             }
         }
 
+        // 
         let mut x: u32 = 0;
 
         while x < SCREEN_WIDTH {
             let camera_x: f32 = 2 as f32 * x as f32 / SCREEN_WIDTH as f32 - 1 as f32;
             let ray_dir = Vector {
-                x:  character.dir.x+character.plane.x*camera_x,
-                y:  character.dir.y+character.plane.y*camera_x
+                x: character.dir.x+character.plane.x*camera_x,
+                y: character.dir.y+character.plane.y*camera_x
             };
 
             let mut map = (character.pos.x as i32, character.pos.y as i32);
@@ -181,7 +182,7 @@ fn main() {
                 side_dist.y = (map.1 as f32 + 1 as f32 - character.pos.y) * delta_dist.y;
             }
 
-            // DDA Alg Begins
+            // DDA Algorithm
             while hit == 0 {
                 if side_dist.x < side_dist.y {
                     side_dist.x += delta_dist.x;
@@ -211,13 +212,12 @@ fn main() {
                 line_height = SCREEN_HEIGHT - 1;
             }
             else {
-                line_height = SCREEN_HEIGHT as u32 / perp_wall_dist as u32;
+                line_height = (SCREEN_HEIGHT as f32 / perp_wall_dist as f32) as u32;
             }
 
             let mut draw_line = ((SCREEN_HEIGHT - line_height) / 2,
                         (SCREEN_HEIGHT + line_height) / 2);
 
-            if draw_line.0 < 0 {draw_line.0 = 0}
             if draw_line.1 >= SCREEN_HEIGHT {draw_line.1 = SCREEN_HEIGHT - 1}
 
             let point1 = sdl2::rect::Point::new(x as i32, draw_line.0 as i32);
