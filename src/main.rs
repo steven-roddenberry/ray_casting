@@ -1,7 +1,6 @@
 use sdl2::pixels::Color;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-use std::time::Duration;
 
 struct Location {
     pos: Vector,
@@ -15,29 +14,35 @@ struct Vector {
 }
 
 fn main() {
-
-    const SCREEN_WIDTH: u32 = 1280;
-    const SCREEN_HEIGHT: u32 = 480;
+    const SCREEN_WIDTH: u32 = 1920;
+    const SCREEN_HEIGHT: u32 = 1080;
     const MAP_X: usize = 24;
     const MAP_Y: usize = 24;
 
+    // Rectangle to clear old pixels
     let screen: sdl2::rect::Rect = sdl2::rect::Rect::new(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
+    // Player character information
     let mut character = Location {
         pos: Vector {
-            x: 4_f32,
-            y: 4_f32
+            x: 10_f32,
+            y: 12_f32
         },
         dir: Vector {
-            x: -1_f32,
-            y: 0_f32
+            x: 0_f32,
+            y: -1_f32
         },
         plane: Vector {
-            x: 0_f32,
-            y: 0.66_f32
+            x: -0.66_f32,
+            y: 0_f32
         }
     };
 
+    // Camera and Character movement rates
+    let move_speed = 0.05;
+    let rotate_speed = 0.05;
+
+    // Current wall layout
     let game_map: [[i32; MAP_X]; MAP_Y] = 
     [
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -66,6 +71,7 @@ fn main() {
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
     ];
 
+    // Open and initialize program window
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     let window = video_subsystem.window(
@@ -78,9 +84,7 @@ fn main() {
 
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    let move_speed = 0.05;
-    let rotate_speed = 0.05;
-
+    // Begin game loop
     'running: loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -137,7 +141,7 @@ fn main() {
         let mut x: u32 = 0;
 
         while x < SCREEN_WIDTH {
-            let camera_x: f32 = 2 as f32 * x as f32 / (SCREEN_WIDTH as f32 - 1 as f32);
+            let camera_x: f32 = 2 as f32 * x as f32 / SCREEN_WIDTH as f32 - 1 as f32;
             let ray_dir = Vector {
                 x:  character.dir.x+character.plane.x*camera_x,
                 y:  character.dir.y+character.plane.y*camera_x
@@ -201,9 +205,9 @@ fn main() {
                 perp_wall_dist = side_dist.y - delta_dist.y;
             }
 
-            let mut line_height: u32 = 0;
+            let line_height: u32;
 
-            if perp_wall_dist as u32 == 0 as u32 {
+            if perp_wall_dist < 1 as f32 {
                 line_height = SCREEN_HEIGHT - 1;
             }
             else {
@@ -240,15 +244,6 @@ fn main() {
 
             x += 1;
         }
-
-
-
-
-
-
-
-
-
 
         canvas.present();
         canvas.set_draw_color(Color::BLACK);
