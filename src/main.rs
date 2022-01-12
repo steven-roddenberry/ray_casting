@@ -17,9 +17,11 @@ struct Vector {
 fn main() {
 
     const SCREEN_WIDTH: u32 = 1280;
-    const SCREEN_HEIGHT: u32 = 720;
+    const SCREEN_HEIGHT: u32 = 480;
     const MAP_X: usize = 24;
     const MAP_Y: usize = 24;
+
+    let screen: sdl2::rect::Rect = sdl2::rect::Rect::new(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     let mut character = Location {
         pos: Vector {
@@ -32,7 +34,7 @@ fn main() {
         },
         plane: Vector {
             x: 0_f32,
-            y: 1_f32
+            y: 0.66_f32
         }
     };
 
@@ -77,7 +79,7 @@ fn main() {
     let mut event_pump = sdl_context.event_pump().unwrap();
 
     let move_speed = 0.05;
-    let rotate_speed = 0.1;
+    let rotate_speed = 0.05;
 
     'running: loop {
         for event in event_pump.poll_iter() {
@@ -88,28 +90,46 @@ fn main() {
                 },
                 Event::KeyDown { keycode: Some(Keycode::W), ..} => {
                     if game_map[(character.pos.x + character.dir.x * move_speed) as usize]
-                               [character.pos.y as usize] == 0 
+                               [(character.pos.y) as usize] == 0 
                         {character.pos.x += character.dir.x * move_speed};
-                    if game_map[character.pos.x as usize]
+                    if game_map[(character.pos.x) as usize]
                                [(character.pos.y + character.dir.y * move_speed) as usize] == 0
                         {character.pos.y += character.dir.y * move_speed};
                 },
                 Event::KeyDown { keycode: Some(Keycode::S), ..} => {
                     if game_map[(character.pos.x - character.dir.x * move_speed) as usize]
-                               [character.pos.y as usize] == 0 
+                               [(character.pos.y) as usize] == 0 
                         {character.pos.x -= character.dir.x * move_speed};
-                    if game_map[character.pos.x as usize]
+                    if game_map[(character.pos.x) as usize]
                                [(character.pos.y - character.dir.y * move_speed) as usize] == 0
                         {character.pos.y -= character.dir.y * move_speed};
                 },
-/*
                 Event::KeyDown { keycode: Some(Keycode::A), ..} => {
+                    let old_dir = character.dir.x;
+                    character.dir.x = old_dir * f32::cos(rotate_speed)
+                                    - character.dir.y * f32::sin(rotate_speed);
+                    character.dir.y = old_dir * f32::sin(rotate_speed)
+                                    + character.dir.y * f32::cos(rotate_speed);
 
+                    let old_plane = character.plane.x;
+                    character.plane.x = old_plane * f32::cos(rotate_speed)
+                                      - character.plane.y * f32::sin(rotate_speed);
+                    character.plane.y = old_plane * f32::sin(rotate_speed)
+                                      + character.plane.y * f32::cos(rotate_speed);
                 },
                 Event::KeyDown { keycode: Some(Keycode::D), ..} => {
+                    let old_dir = character.dir.x;
+                    character.dir.x = old_dir * f32::cos(-rotate_speed)
+                                    - character.dir.y * f32::sin(-rotate_speed);
+                    character.dir.y = old_dir * f32::sin(-rotate_speed)
+                                    + character.dir.y * f32::cos(-rotate_speed);
 
+                    let old_plane = character.plane.x;
+                    character.plane.x = old_plane * f32::cos(-rotate_speed)
+                                      - character.plane.y * f32::sin(-rotate_speed);
+                    character.plane.y = old_plane * f32::sin(-rotate_speed)
+                                      + character.plane.y * f32::cos(-rotate_speed);
                 },
-*/
                 _ => {}
             }
         }
@@ -117,7 +137,7 @@ fn main() {
         let mut x: u32 = 0;
 
         while x < SCREEN_WIDTH {
-            let camera_x: f32 = (2 as f32 * x as f32 / (SCREEN_WIDTH as f32)) - 1 as f32;
+            let camera_x: f32 = 2 as f32 * x as f32 / (SCREEN_WIDTH as f32 - 1 as f32);
             let ray_dir = Vector {
                 x:  character.dir.x+character.plane.x*camera_x,
                 y:  character.dir.y+character.plane.y*camera_x
@@ -181,16 +201,23 @@ fn main() {
                 perp_wall_dist = side_dist.y - delta_dist.y;
             }
 
-            let line_height = SCREEN_HEIGHT as i32 / perp_wall_dist as i32;
+            let mut line_height: u32 = 0;
 
-            let mut draw_line = ((SCREEN_HEIGHT as i32 - line_height) / 2,
-                        (SCREEN_HEIGHT as i32 + line_height) / 2);
+            if perp_wall_dist as u32 == 0 as u32 {
+                line_height = SCREEN_HEIGHT - 1;
+            }
+            else {
+                line_height = SCREEN_HEIGHT as u32 / perp_wall_dist as u32;
+            }
 
-            if draw_line.0 < 0 {draw_line.0 = 0 as i32}
-            if draw_line.1 >= SCREEN_HEIGHT as i32 {draw_line.1 = SCREEN_HEIGHT as i32 - 1}
+            let mut draw_line = ((SCREEN_HEIGHT - line_height) / 2,
+                        (SCREEN_HEIGHT + line_height) / 2);
 
-            let point1 = sdl2::rect::Point::new(x as i32, draw_line.0);
-            let point2 = sdl2::rect::Point::new(x as i32, draw_line.1);
+            if draw_line.0 < 0 {draw_line.0 = 0}
+            if draw_line.1 >= SCREEN_HEIGHT {draw_line.1 = SCREEN_HEIGHT - 1}
+
+            let point1 = sdl2::rect::Point::new(x as i32, draw_line.0 as i32);
+            let point2 = sdl2::rect::Point::new(x as i32, draw_line.1 as i32);
 
             let mut color: Color;
 
@@ -223,8 +250,9 @@ fn main() {
 
 
 
-
-
         canvas.present();
+        canvas.set_draw_color(Color::BLACK);
+        canvas.fill_rect(screen);
+
     }
 }
