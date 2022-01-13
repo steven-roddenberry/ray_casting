@@ -14,8 +14,8 @@ struct Vector {
 }
 
 fn main() {
-    const SCREEN_WIDTH: u32 = 1280;
-    const SCREEN_HEIGHT: u32 = 720;
+    const SCREEN_WIDTH: u32 = 1920;
+    const SCREEN_HEIGHT: u32 = 1080;
     const MAP_X: usize = 24;
     const MAP_Y: usize = 24;
 
@@ -33,42 +33,42 @@ fn main() {
             y: -1_f32
         },
         plane: Vector {
-            x: -0.66_f32,
+            x: -1_f32,
             y: 0_f32
         }
     };
 
     // Camera and Character movement rates
-    let move_speed = 0.1;
-    let rotate_speed = 0.06;
+    let move_speed = 0.15;
+    let rotate_speed = 0.0628318531;
 
-    // Current wall layout
+    // Sample wall layout
     let game_map: [[i32; MAP_X]; MAP_Y] = 
     [
-        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1],
-        [1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1],
-        [1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        [4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,7,7,7,7,7,7,7],
+        [4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7],
+        [4,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7],
+        [4,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7],
+        [4,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7],
+        [4,0,4,0,0,0,0,5,5,5,5,5,5,5,5,5,7,7,0,7,7,7,7,7],
+        [4,0,5,0,0,0,0,5,0,5,0,5,0,5,0,5,7,0,0,0,7,7,7,1],
+        [4,0,6,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8],
+        [4,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,7,7,1],
+        [4,0,8,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8],
+        [4,0,0,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,7,7,7,1],
+        [4,0,0,0,0,0,0,5,5,5,5,0,5,5,5,5,7,7,7,7,7,7,7,1],
+        [6,6,6,6,6,6,6,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6],
+        [8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4],
+        [6,6,6,6,6,6,0,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6],
+        [4,4,4,4,4,4,0,4,4,4,6,0,6,2,2,2,2,2,2,2,3,3,3,3],
+        [4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2],
+        [4,0,0,0,0,0,0,0,0,0,0,0,6,2,0,0,5,0,0,2,0,0,0,2],
+        [4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2],
+        [4,0,6,0,6,0,0,0,0,4,6,0,0,0,0,0,5,0,0,0,0,0,0,2],
+        [4,0,0,5,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2],
+        [4,0,6,0,6,0,0,0,0,4,6,0,6,2,0,0,5,0,0,2,0,0,0,2],
+        [4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2],
+        [4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3]
     ];
 
     // Open and initialize program window
@@ -93,52 +93,27 @@ fn main() {
                     break 'running
                 },
                 Event::KeyDown { keycode: Some(Keycode::W), ..} => {
-                    if game_map[(character.pos.x + character.dir.x * move_speed) as usize]
-                               [(character.pos.y) as usize] == 0 
-                        {character.pos.x += character.dir.x * move_speed};
-                    if game_map[(character.pos.x) as usize]
-                               [(character.pos.y + character.dir.y * move_speed) as usize] == 0
-                        {character.pos.y += character.dir.y * move_speed};
-                },
+                    move_forwards(&game_map, &mut character, &move_speed);
+                    },
                 Event::KeyDown { keycode: Some(Keycode::S), ..} => {
-                    if game_map[(character.pos.x - character.dir.x * move_speed) as usize]
-                               [(character.pos.y) as usize] == 0 
-                        {character.pos.x -= character.dir.x * move_speed};
-                    if game_map[(character.pos.x) as usize]
-                               [(character.pos.y - character.dir.y * move_speed) as usize] == 0
-                        {character.pos.y -= character.dir.y * move_speed};
+                    move_backwards(&game_map, &mut character, &move_speed);
                 },
                 Event::KeyDown { keycode: Some(Keycode::A), ..} => {
-                    let old_dir = character.dir.x;
-                    character.dir.x = old_dir * f32::cos(rotate_speed)
-                                    - character.dir.y * f32::sin(rotate_speed);
-                    character.dir.y = old_dir * f32::sin(rotate_speed)
-                                    + character.dir.y * f32::cos(rotate_speed);
-
-                    let old_plane = character.plane.x;
-                    character.plane.x = old_plane * f32::cos(rotate_speed)
-                                      - character.plane.y * f32::sin(rotate_speed);
-                    character.plane.y = old_plane * f32::sin(rotate_speed)
-                                      + character.plane.y * f32::cos(rotate_speed);
+                    move_left(&game_map, &mut character, &move_speed);
                 },
                 Event::KeyDown { keycode: Some(Keycode::D), ..} => {
-                    let old_dir = character.dir.x;
-                    character.dir.x = old_dir * f32::cos(-rotate_speed)
-                                    - character.dir.y * f32::sin(-rotate_speed);
-                    character.dir.y = old_dir * f32::sin(-rotate_speed)
-                                    + character.dir.y * f32::cos(-rotate_speed);
-
-                    let old_plane = character.plane.x;
-                    character.plane.x = old_plane * f32::cos(-rotate_speed)
-                                      - character.plane.y * f32::sin(-rotate_speed);
-                    character.plane.y = old_plane * f32::sin(-rotate_speed)
-                                      + character.plane.y * f32::cos(-rotate_speed);
+                    move_right(&game_map, &mut character, &move_speed);
+                },                
+                Event::KeyDown { keycode: Some(Keycode::Left), ..} => {
+                    rotate_left(&mut character, rotate_speed);
+                },
+                Event::KeyDown { keycode: Some(Keycode::Right), ..} => {
+                    rotate_right(&mut character, rotate_speed);
                 },
                 _ => {}
             }
         }
 
-        // 
         let mut x: u32 = 0;
 
         while x < SCREEN_WIDTH {
@@ -165,24 +140,12 @@ fn main() {
                 y: 0 as f32
             };
 
-            if ray_dir.x < 0 as f32 {
-                step_dir.0 = -1;
-                side_dist.x = (character.pos.x - map.0 as f32) * delta_dist.x;
-            }
-            else {
-                step_dir.0 = 1;
-                side_dist.x = (map.0 as f32 + 1 as f32 - character.pos.x) * delta_dist.x;
-            }
-            if ray_dir.y < 0 as f32 {
-                step_dir.1 = -1;
-                side_dist.y = (character.pos.y - map.1 as f32) * delta_dist.y;
-            }
-            else {
-                step_dir.1 = 1;
-                side_dist.y = (map.1 as f32 + 1 as f32 - character.pos.y) * delta_dist.y;
-            }
+            ray_to_step(&ray_dir, &character, &map, &delta_dist,
+                        &mut step_dir, &mut side_dist);
 
             // DDA Algorithm
+            dda_alg(&game_map, &mut hit, &mut side_dist, &mut map, &mut side,
+                    &delta_dist, &step_dir);
             while hit == 0 {
                 if side_dist.x < side_dist.y {
                     side_dist.x += delta_dist.x;
@@ -197,23 +160,9 @@ fn main() {
                 if game_map[map.0 as usize][map.1 as usize] != 0 { hit = 1 }
             }
 
-            let perp_wall_dist: f32;
+            let perp_wall_dist: f32 = perp_wall_dist(&side, &side_dist, &delta_dist);
 
-            if side == 0 {
-                perp_wall_dist = side_dist.x - delta_dist.x;
-            }
-            else {
-                perp_wall_dist = side_dist.y - delta_dist.y;
-            }
-
-            let line_height: u32;
-
-            if perp_wall_dist < 1 as f32 {
-                line_height = SCREEN_HEIGHT - 1;
-            }
-            else {
-                line_height = (SCREEN_HEIGHT as f32 / perp_wall_dist as f32) as u32;
-            }
+            let line_height: u32 = vert_pixels(&perp_wall_dist, &SCREEN_HEIGHT);
 
             let mut draw_line = ((SCREEN_HEIGHT - line_height) / 2,
                         (SCREEN_HEIGHT + line_height) / 2);
@@ -223,31 +172,218 @@ fn main() {
             let point1 = sdl2::rect::Point::new(x as i32, draw_line.0 as i32);
             let point2 = sdl2::rect::Point::new(x as i32, draw_line.1 as i32);
 
-            let mut color: Color;
-
-            match game_map[map.0 as usize][map.1 as usize] {
-                1 => color = Color::RED,
-                2 => color = Color::GREEN,
-                3 => color = Color::BLUE,
-                4 => color = Color::WHITE,
-                _ => color = Color::YELLOW
-            }
-
-            if side == 1 {
-                color.r = color.r / 2;
-                color.g = color.g / 2;
-                color.b = color.b / 2;
-            }
+            let color: Color = pixel_color(game_map, &map, &side);
 
             canvas.set_draw_color(color);
-            canvas.draw_line(point1, point2);
+            let _error_check = canvas.draw_line(point1, point2);
 
             x += 1;
         }
 
         canvas.present();
         canvas.set_draw_color(Color::BLACK);
-        canvas.fill_rect(screen);
+        let _error_check = canvas.fill_rect(screen);
 
     }
+}
+
+// Movement Functions
+
+fn move_forwards<const MAP_X: usize, const MAP_Y: usize>
+                (game_map: &[[i32; MAP_X]; MAP_Y],
+                 character: &mut Location,
+                 move_speed: & f32) {
+
+    if game_map[(character.pos.x + character.dir.x * move_speed) as usize]
+               [(character.pos.y) as usize] == 0 
+        {character.pos.x += character.dir.x * move_speed};
+
+    if game_map[(character.pos.x) as usize]
+           [(character.pos.y + character.dir.y * move_speed) as usize] == 0
+        {character.pos.y += character.dir.y * move_speed};
+
+}
+
+fn move_backwards<const MAP_X: usize, const MAP_Y: usize>
+                 (game_map: &[[i32; MAP_X]; MAP_Y],
+                  character: &mut Location,
+                  move_speed: & f32) {
+
+    if game_map[(character.pos.x - character.dir.x * move_speed) as usize]
+               [(character.pos.y) as usize] == 0 
+        {character.pos.x -= character.dir.x * move_speed};
+
+    if game_map[(character.pos.x) as usize]
+               [(character.pos.y - character.dir.y * move_speed) as usize] == 0
+        {character.pos.y -= character.dir.y * move_speed};
+
+}
+
+fn move_left<const MAP_X: usize, const MAP_Y: usize>
+            (game_map: &[[i32; MAP_X]; MAP_Y],
+             character: &mut Location,
+             move_speed: & f32) {
+
+    if game_map[(character.pos.x - character.plane.x * move_speed) as usize]
+               [(character.pos.y) as usize] == 0 
+        {character.pos.x -= character.plane.x * move_speed};
+
+    if game_map[(character.pos.x) as usize]
+               [(character.pos.y - character.plane.y * move_speed) as usize] == 0
+        {character.pos.y -= character.plane.y * move_speed};
+
+}
+
+fn move_right<const MAP_X: usize, const MAP_Y: usize>
+             (game_map: &[[i32; MAP_X]; MAP_Y],
+              character: &mut Location,
+              move_speed: & f32) {
+
+    if game_map[(character.pos.x + character.plane.x * move_speed) as usize]
+               [(character.pos.y) as usize] == 0 
+        {character.pos.x += character.plane.x * move_speed};
+
+    if game_map[(character.pos.x) as usize]
+               [(character.pos.y + character.plane.y * move_speed) as usize] == 0
+        {character.pos.y += character.plane.y * move_speed};
+
+}
+
+// Camera Functions
+
+fn rotate_left(mut character: &mut Location, rotate_speed: f32) {
+
+    let old_dir = character.dir.x;
+    character.dir.x = old_dir * f32::cos(rotate_speed)
+                    - character.dir.y * f32::sin(rotate_speed);
+    character.dir.y = old_dir * f32::sin(rotate_speed)
+                    + character.dir.y * f32::cos(rotate_speed);
+
+    let old_plane = character.plane.x;
+    character.plane.x = old_plane * f32::cos(rotate_speed)
+                      - character.plane.y * f32::sin(rotate_speed);
+    character.plane.y = old_plane * f32::sin(rotate_speed)
+                      + character.plane.y * f32::cos(rotate_speed);
+
+}
+
+fn rotate_right(mut character: &mut Location, rotate_speed: f32) {
+
+    let old_dir = character.dir.x;
+    character.dir.x = old_dir * f32::cos(-rotate_speed)
+                    - character.dir.y * f32::sin(-rotate_speed);
+    character.dir.y = old_dir * f32::sin(-rotate_speed)
+                    + character.dir.y * f32::cos(-rotate_speed);
+
+    let old_plane = character.plane.x;
+    character.plane.x = old_plane * f32::cos(-rotate_speed)
+                      - character.plane.y * f32::sin(-rotate_speed);
+    character.plane.y = old_plane * f32::sin(-rotate_speed)
+                      + character.plane.y * f32::cos(-rotate_speed);
+
+}
+
+
+// Render Data Functions
+
+fn ray_to_step(ray_dir: &Vector,
+               character: &Location,
+               map: &(i32, i32),
+               delta_dist: &Vector,
+               mut step_dir: &mut (i8, i8),
+               mut side_dist: &mut Vector) {
+
+    if ray_dir.x < 0 as f32 {
+        step_dir.0 = -1;
+        side_dist.x = (character.pos.x - map.0 as f32) * delta_dist.x;
+    }
+    else {
+        step_dir.0 = 1;
+        side_dist.x = (map.0 as f32 + 1 as f32 - character.pos.x) * delta_dist.x;
+    }
+    if ray_dir.y < 0 as f32 {
+        step_dir.1 = -1;
+        side_dist.y = (character.pos.y - map.1 as f32) * delta_dist.y;
+    }
+    else {
+        step_dir.1 = 1;
+        side_dist.y = (map.1 as f32 + 1 as f32 - character.pos.y) * delta_dist.y;
+    }
+
+}
+
+fn dda_alg<const MAP_X: usize, const MAP_Y: usize>
+          (game_map: &[[i32; MAP_X]; MAP_Y],
+           hit: &mut u8,
+           side_dist: &mut Vector,
+           map: &mut (i32, i32),
+           side: &mut i8,
+           delta_dist: &Vector,
+           step_dir: &(i8, i8)) {
+
+    while *hit == 0 as u8 {
+        if side_dist.x < side_dist.y {
+            side_dist.x += delta_dist.x;
+            map.0 += step_dir.0 as i32;
+            *side = 0;
+        }
+        else {
+            side_dist.y += delta_dist.y;
+            map.1 += step_dir.1 as i32;
+            *side = 1;
+        }
+        if game_map[map.0 as usize][map.1 as usize] != 0 { *hit = 1}
+    }
+
+}
+
+fn perp_wall_dist(side: &i8, side_dist: &Vector, delta_dist: &Vector) -> f32 {
+
+    if *side == 0 {
+        side_dist.x - delta_dist.x
+    }
+    else {
+        side_dist.y - delta_dist.y
+    }
+
+}
+
+// Display Function s
+
+fn vert_pixels(perp_wall_dist: &f32, screen_height: &u32) -> u32 {
+
+    if *perp_wall_dist < 1 as f32 {
+        *screen_height - 1
+    }
+    else {
+        (*screen_height as f32 / *perp_wall_dist) as u32
+    }
+
+}
+
+fn pixel_color<const MAP_X: usize, const MAP_Y: usize>
+              (game_map: [[i32; MAP_X]; MAP_Y],
+               map: &(i32, i32),
+               side: &i8) -> Color {
+
+    let mut color: Color;
+
+    match game_map[map.0 as usize][map.1 as usize] {
+        1 => color = Color::RED,
+        2 => color = Color::GREEN,
+        3 => color = Color::BLUE,
+        4 => color = Color::WHITE,
+        5 => color = Color::CYAN,
+        6 => color = Color::MAGENTA,
+        7 => color = Color::GRAY,
+        _ => color = Color::YELLOW
+    }
+
+    if *side == 1 {
+        color.r = color.r / 2;
+        color.g = color.g / 2;
+        color.b = color.b / 2;
+    }
+    color
+    
 }
