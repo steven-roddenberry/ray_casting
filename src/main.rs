@@ -40,7 +40,7 @@ fn main() {
 
     // Camera and Character movement rates
     let move_speed = 0.15;
-    let rotate_speed = 0.0628318531;
+    let rotate_speed = 0.0628318531;        // ~ 2 * pi / 100
 
     // Sample wall layout
     let game_map: [[i32; MAP_X]; MAP_Y] = 
@@ -385,5 +385,5 @@ fn pixel_color<const MAP_X: usize, const MAP_Y: usize>
         color.b = color.b / 2;
     }
     color
-    
+
 }
